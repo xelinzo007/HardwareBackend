@@ -6,4 +6,5 @@ pydantic
 python-dotenv
 pydantic-settings
 mysql-connector-python
+python-jose[cryptography]
  
