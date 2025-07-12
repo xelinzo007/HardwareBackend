@@ -79,6 +79,7 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
     return InvoiceOut(
         invoice_id=invoice.invoice_id,
         date=invoice.date,
+        time=invoice.time,
         customer=CustomerIn(
             customer_name=customer.customer_name,
             address=customer.address,

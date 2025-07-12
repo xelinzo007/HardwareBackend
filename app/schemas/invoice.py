@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from datetime import datetime
+from datetime import date,time
 
 class CustomerIn(BaseModel):
     customer_name: str
@@ -24,7 +24,8 @@ class InvoiceIn(BaseModel):
 
 class InvoiceOut(BaseModel):
     invoice_id: str
-    date: datetime
+    date: date
+    Time: time
     customer: CustomerIn
     items: List[ProductItem]
     total_before_tax: float

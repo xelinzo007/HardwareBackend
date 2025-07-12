@@ -1,6 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.orm import Session
-from datetime import datetime, timedelta
+from datetime import date, timedelta
 from app.db.database import get_db
 from app.db.models.invoice import Invoice
 
@@ -9,12 +9,15 @@ router = APIRouter()
 @router.get("/summary")
 def get_dashboard_summary(
     db: Session = Depends(get_db),
-    start_date: datetime = Query(...),
-    end_date: datetime = Query(...),
+    start_date: date = Query(..., description="Start date in YYYY-MM-DD format"),
+    end_date: date = Query(..., description="End date in YYYY-MM-DD format"),
     compare: bool = Query(True)
 ):
     # Current period
-    invoices = db.query(Invoice).filter(Invoice.date.between(start_date, end_date)).all()
+    invoices = db.query(Invoice).filter(
+        Invoice.date.between(start_date, end_date)
+    ).all()
+
     total_sales = sum(inv.final_total_after_discount for inv in invoices)
     total_credit = sum(inv.final_total_after_discount for inv in invoices if inv.payment_mode.lower() == "credit")
     total_invoices = len(invoices)
@@ -33,7 +36,10 @@ def get_dashboard_summary(
         prev_start = start_date - delta
         prev_end = end_date - delta
 
-        prev_invoices = db.query(Invoice).filter(Invoice.date.between(prev_start, prev_end)).all()
+        prev_invoices = db.query(Invoice).filter(
+            Invoice.date.between(prev_start, prev_end)
+        ).all()
+
         prev_sales = sum(inv.final_total_after_discount for inv in prev_invoices)
         prev_credit = sum(inv.final_total_after_discount for inv in prev_invoices if inv.payment_mode.lower() == "credit")
         prev_count = len(prev_invoices)
