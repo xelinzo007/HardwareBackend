@@ -24,3 +24,5 @@ class UserPermission(Base):
     permission_name = Column(String, nullable=False)  # e.g., "view_dashboard"
 
     user = relationship("User", back_populates="permissions")
+
+
