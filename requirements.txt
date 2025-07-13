@@ -9,4 +9,5 @@ mysql-connector-python
 python-jose[cryptography]
 python-multipart
 passlib[bcrypt]
+pydantic[email]
 pytz
