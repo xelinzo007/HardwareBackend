@@ -6,7 +6,7 @@ class UserCreate(BaseModel):
     username: str = Field(..., min_length=3)
     email: EmailStr
     password: str = Field(..., min_length=6)
-    role: str = Field(..., regex="^(Admin|User)$")
+    role: str = Field(..., pattern="^(Admin|User)$")  # Pydantic v2 uses `pattern`
     permissions: List[str] = []
 
 class UserOut(BaseModel):
@@ -17,5 +17,6 @@ class UserOut(BaseModel):
     created_at: datetime
     permissions: List[str]
 
-    class Config:
-        orm_mode = True
+    model_config = {
+        "from_attributes": True  # Replacement for `orm_mode = True` in v2
+    }
