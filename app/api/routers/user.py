@@ -42,7 +42,7 @@ def create_user(user: UserCreate, db: Session = Depends(get_db)):
         permissions=user.permissions
     )
 
-@router.get("/", response_model=List[UserOut])
+@router.get("/", response_model=list[UserOut])
 def get_users(db: Session = Depends(get_db)):
     users = db.query(User).all()
     result = []
