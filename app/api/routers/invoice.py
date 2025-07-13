@@ -12,6 +12,7 @@ router = APIRouter()
 
 @router.post("/", response_model=InvoiceOut)
 def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
+    # Check or create customer
     customer_data = invoice_data.customer
     customer = db.query(Customer).filter(Customer.phone == customer_data.phone).first()
     if not customer:
@@ -34,6 +35,8 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail=f"Product '{item.product_code}' not found")
         if db_product.quantity < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {db_product.product_name}")
+        
+        # Reduce stock
         db_product.quantity -= item.quantity
 
         line_total = item.price_per_unit * item.quantity - item.discount
