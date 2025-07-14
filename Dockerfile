@@ -1,8 +1,10 @@
+# Base image
 FROM python:3.11-slim
 
+# Set working directory
 WORKDIR /app
 
-# Install OS build dependencies
+# Install system-level dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
@@ -11,13 +13,16 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy and install Python dependencies
+# Pre-install dependencies (allows Docker cache reuse)
 COPY requirements.txt .
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy the rest of your app
+# Copy entire application code
 COPY . .
 
-# Run the app
+# Expose the required port (important for Render)
+EXPOSE 10000
+
+# Start the FastAPI app with correct host/port
 CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "10000"]
