@@ -22,3 +22,14 @@ def create_product(product_data: ProductCreate, db: Session = Depends(get_db)):
 @router.get("/", response_model=list[ProductOut])
 def get_products(db: Session = Depends(get_db)):
     return db.query(Product).all()
+
+# ✅ DELETE endpoint
+@router.delete("/{product_id}", status_code=204)
+def delete_product(product_id: int, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    db.delete(product)
+    db.commit()
+    return

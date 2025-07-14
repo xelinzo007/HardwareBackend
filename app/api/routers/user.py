@@ -71,3 +71,19 @@ def get_user_permissions(user_id: int, db: Session = Depends(get_db)):
         "username": user.username,
         "permissions": permissions
     }
+
+
+# ✅ DELETE endpoint to delete a user and their permissions
+@router.delete("/{user_id}", status_code=204)
+def delete_user(user_id: int, db: Session = Depends(get_db)):
+    user = db.query(User).filter(User.id == user_id).first()
+    if not user:
+        raise HTTPException(status_code=404, detail="User not found")
+
+    # Delete related permissions
+    db.query(UserPermission).filter(UserPermission.user_id == user_id).delete()
+
+    # Delete user
+    db.delete(user)
+    db.commit()
+    return
