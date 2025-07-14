@@ -38,7 +38,7 @@ from app.db.database import get_db
 from app.db.models.user import User
 from pydantic import BaseModel
 from passlib.context import CryptContext
-import jwt
+from jose import jwt
 from datetime import datetime, timedelta
 import os
 
