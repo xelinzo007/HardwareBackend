@@ -12,7 +12,6 @@ router = APIRouter()
 
 @router.post("/", response_model=InvoiceOut)
 def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
-    # Check or create customer
     customer_data = invoice_data.customer
     customer = db.query(Customer).filter(Customer.phone == customer_data.phone).first()
     if not customer:
@@ -35,8 +34,7 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
             raise HTTPException(status_code=404, detail=f"Product '{item.product_code}' not found")
         if db_product.quantity < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {db_product.product_name}")
-        
-        # Reduce stock
+
         db_product.quantity -= item.quantity
 
         line_total = item.price_per_unit * item.quantity - item.discount
@@ -88,7 +86,7 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
             address=customer.address,
             phone=customer.phone
         ),
-        items=invoice_data.items,
+        items=[ProductItem(**item.__dict__) for item in items],
         total_before_tax=total_before_tax,
         gst_amount=total_gst,
         taxable_amount=taxable_amount,
@@ -100,7 +98,30 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
 
 @router.get("/")
 def get_all_invoices(db: Session = Depends(get_db)):
-    return db.query(Invoice).all()
+    invoices = db.query(Invoice).all()
+    results = []
+    for invoice in invoices:
+        results.append({
+            "invoice_id": invoice.invoice_id,
+            "date": invoice.date,
+            "time": invoice.time,
+            "customer_name": invoice.customer_name,
+            "phone": invoice.phone,
+            "payment_mode": invoice.payment_mode,
+            "total": invoice.final_total_after_discount,
+            "items": [
+                {
+                    "product_code": item.product_code,
+                    "product_name": item.product_name,
+                    "category": item.category,
+                    "quantity": item.quantity,
+                    "price_per_unit": item.price_per_unit,
+                    "gst_percent": item.gst_percent,
+                    "discount": item.discount
+                } for item in invoice.items
+            ]
+        })
+    return results
 
 @router.get("/by-phone/{phone}")
 def get_invoices_by_phone(phone: str, db: Session = Depends(get_db)):
@@ -111,16 +132,34 @@ def get_invoice_by_id(invoice_id: str, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
-    return invoice
+    return {
+        "invoice_id": invoice.invoice_id,
+        "date": invoice.date,
+        "time": invoice.time,
+        "customer_name": invoice.customer_name,
+        "phone": invoice.phone,
+        "payment_mode": invoice.payment_mode,
+        "total": invoice.final_total_after_discount,
+        "items": [
+            {
+                "product_code": item.product_code,
+                "product_name": item.product_name,
+                "category": item.category,
+                "quantity": item.quantity,
+                "price_per_unit": item.price_per_unit,
+                "gst_percent": item.gst_percent,
+                "discount": item.discount
+            } for item in invoice.items
+        ]
+    }
 
-# ✅ DELETE endpoint to delete invoice by invoice_id
 @router.delete("/{invoice_id}", status_code=200)
 def delete_invoice(invoice_id: str, db: Session = Depends(get_db)):
     invoice = db.query(Invoice).filter(Invoice.invoice_id == invoice_id).first()
     if not invoice:
         raise HTTPException(status_code=404, detail="Invoice not found")
 
-    # Restore product stock (optional)
+    # Restore product stock
     for item in invoice.items:
         product = db.query(Product).filter(Product.id == item.product_id).first()
         if product:
