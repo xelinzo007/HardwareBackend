@@ -8,7 +8,7 @@ class Product(Base):
     
     id = Column(Integer, primary_key=True, index=True)
     product_name = Column(String, index=True)
-    product_code = Column(String, index=True)
+    product_code = Column(String, index=True)  # ✅ Removed unique=True
     category = Column(String)
     supplier = Column(String)
     quantity = Column(Integer)
