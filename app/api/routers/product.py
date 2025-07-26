@@ -33,3 +33,22 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     db.delete(product)
     db.commit()
     return
+
+@router.put("/{product_id}", response_model=ProductOut)
+def update_product(product_id: int, product_data: ProductCreate, db: Session = Depends(get_db)):
+    product = db.query(Product).filter(Product.id == product_id).first()
+    if not product:
+        raise HTTPException(status_code=404, detail="Product not found")
+
+    # # Optional: Check if product_code is being changed to one that already exists
+    # if product.product_code != product_data.product_code:
+    #     code_exists = db.query(Product).filter(Product.product_code == product_data.product_code).first()
+    #     if code_exists:
+    #         raise HTTPException(status_code=400, detail="Product code already exists.")
+
+    for key, value in product_data.dict().items():
+        setattr(product, key, value)
+
+    db.commit()
+    db.refresh(product)
+    return product
