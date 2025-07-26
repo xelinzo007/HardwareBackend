@@ -34,7 +34,7 @@ def delete_product(product_id: int, db: Session = Depends(get_db)):
     db.commit()
     return
 
-@router.put("/products/{product_id}", response_model=ProductOut)
+@router.put("/{product_id}", response_model=ProductOut)
 def update_product(product_id: int, product: ProductUpdate, db: Session = Depends(get_db)):
     db_product = db.query(Product).filter(Product.id == product_id).first()
     if not db_product:
