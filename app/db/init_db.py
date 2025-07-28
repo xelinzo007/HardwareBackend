@@ -1,5 +1,5 @@
 from app.db.base import Base, engine
-from app.db.models import customer, product, category  # Import all models to ensure they are registered
+from app.db.models import *  # Import all models to ensure they are registered
 
 def init_db():
     print("Creating tables...")
