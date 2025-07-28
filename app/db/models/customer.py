@@ -1,5 +1,4 @@
-import datetime
-from xmlrpc.client import DateTime
+from datetime import datetime
 from sqlalchemy import Column, Integer, String,Text
 from sqlalchemy.orm import relationship
 from app.db.base import Base
