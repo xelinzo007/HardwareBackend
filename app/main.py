@@ -17,7 +17,6 @@ app.add_middleware(
 app.include_router(product.router, prefix="/products", tags=["Products"])
 app.include_router(invoice.router, prefix="/invoices", tags=["Invoices"])
 # app.include_router(report.router, prefix="/reports", tags=["Reports"])
-app.include_router(customer.router, prefix="/customers", tags=["Customers"])
 app.include_router(category.router, prefix="/categories", tags=["Categories"])
 app.include_router(auth.router)
 app.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
