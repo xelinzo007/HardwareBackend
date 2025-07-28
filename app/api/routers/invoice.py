@@ -29,28 +29,31 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
     total_gst = 0
 
     for item in invoice_data.items:
-        db_product = db.query(Product).filter(Product.product_code == item.product_code).first()
+        db_product = db.query(Product).filter(Product.id == item.product_id).first()
         if not db_product:
-            raise HTTPException(status_code=404, detail=f"Product '{item.product_code}' not found")
+            raise HTTPException(status_code=404, detail=f"Product with ID {item.product_id} not found")
         if db_product.quantity < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {db_product.product_name}")
 
         db_product.quantity -= item.quantity
 
-        line_total = item.price_per_unit * item.quantity - item.discount
-        gst_amount = (line_total * item.gst_percent) / 100
-        total_before_tax += line_total
+        # Use selling price and calculate GST
+        base_total = db_product.selling_price * item.quantity
+        gst_amount = (base_total * db_product.gst) / 100
+        line_total = base_total + gst_amount
+
+        total_before_tax += base_total
         total_gst += gst_amount
 
         invoice_item = InvoiceItem(
             product_id=db_product.id,
-            product_code=item.product_code,
-            product_name=item.product_name,
-            category=item.category,
+            product_code=db_product.product_code,
+            product_name=db_product.product_name,
+            category=db_product.category,
             quantity=item.quantity,
-            price_per_unit=item.price_per_unit,
-            discount=item.discount,
-            gst_percent=item.gst_percent
+            price_per_unit=db_product.selling_price,
+            discount=item.discount,  # Optional: you can skip if you're not applying discounts
+            gst_percent=db_product.gst
         )
         items.append(invoice_item)
 
