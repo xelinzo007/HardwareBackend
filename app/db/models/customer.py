@@ -1,7 +1,6 @@
 import datetime
-from xml.dom.minidom import Text
 from xmlrpc.client import DateTime
-from sqlalchemy import Column, Integer, String
+from sqlalchemy import Column, Integer, String,Text
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 

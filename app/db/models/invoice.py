@@ -1,5 +1,5 @@
 from typing import Text
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, Time
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, Time,text
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from pytz import timezone
@@ -20,7 +20,7 @@ class Invoice(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer_name = Column(String(100))
     phone = Column(String(20))
-    address = Column(Text)
+    address = Column(text)
     date = Column(Date, default=datetime.utcnow)
     time = Column(Time, default=datetime.utcnow().time)
     payment_mode = Column(String(50))
