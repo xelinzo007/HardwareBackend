@@ -1,16 +1,11 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date,Time
+from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, Time
 from sqlalchemy.orm import relationship
 from datetime import datetime
-from sqlalchemy.ext.declarative import declarative_base
 from pytz import timezone
 from app.db.base import Base
 
-
-Base = declarative_base()
-
 class Invoice(Base):
     __tablename__ = "invoices"
-
 
     def get_ist_date():
         ist = timezone("Asia/Kolkata")
