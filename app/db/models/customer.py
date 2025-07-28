@@ -12,3 +12,4 @@ class Customer(Base):
     created_at = Column(DateTime, default=datetime.now())
 
     invoices = relationship("Invoice", back_populates="customer")
+    
