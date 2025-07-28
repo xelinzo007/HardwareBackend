@@ -1,13 +1,13 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Optional
 
 class CustomerCreate(BaseModel):
-    customer_name: str
-    phone: str  # required
-    address: str | None = None
+    customer_name: str = Field(..., min_length=1)
+    phone: str = Field(..., min_length=5)
+    address: Optional[str] = None
 
 class CustomerOut(CustomerCreate):
     id: int
 
-    model_config = {
-        "from_attributes": True
-    }
+    class Config:
+        from_attributes = True
