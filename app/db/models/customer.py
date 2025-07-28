@@ -1,14 +1,16 @@
+import datetime
+from xml.dom.minidom import Text
+from xmlrpc.client import DateTime
 from sqlalchemy import Column, Integer, String
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 
 class Customer(Base):
     __tablename__ = "customers"
-
     id = Column(Integer, primary_key=True, index=True)
-    customer_name = Column(String(255), nullable=False)
-    phone = Column(String(20), nullable=True)
-    address = Column(String(255), nullable=True)
+    customer_name = Column(String(100), nullable=False)
+    phone = Column(String(20), unique=True, nullable=False)
+    address = Column(Text)
+    created_at = Column(DateTime, default=datetime.now)
 
-    # 🔧 Add this to fix the error
     invoices = relationship("Invoice", back_populates="customer")
