@@ -29,9 +29,9 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
     total_gst = 0
 
     for item in invoice_data.items:
-        db_product = db.query(Product).filter(Product.id == item.product_id).first()
+        db_product = db.query(Product).filter(Product.id == item.id).first()
         if not db_product:
-            raise HTTPException(status_code=404, detail=f"Product with ID {item.product_id} not found")
+            raise HTTPException(status_code=404, detail=f"Product with ID {item.id} not found")
         if db_product.quantity < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {db_product.product_name}")
 
@@ -164,7 +164,7 @@ def delete_invoice(invoice_id: str, db: Session = Depends(get_db)):
 
     # Restore product stock
     for item in invoice.items:
-        product = db.query(Product).filter(Product.id == item.product_id).first()
+        product = db.query(Product).filter(Product.id == item.id).first()
         if product:
             product.quantity += item.quantity
 
