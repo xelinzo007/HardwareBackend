@@ -20,7 +20,7 @@ class Invoice(Base):
     customer_id = Column(Integer, ForeignKey("customers.id"), nullable=False)
     customer_name = Column(String(100))
     phone = Column(String(20))
-    address = Column(text)
+    address = Column(String(255), nullable=True)
     date = Column(Date, default=datetime.utcnow)
     time = Column(Time, default=datetime.utcnow().time)
     payment_mode = Column(String(50))
