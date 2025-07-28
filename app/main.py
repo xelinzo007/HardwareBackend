@@ -1,6 +1,6 @@
 
 from fastapi import FastAPI
-from app.api.routers import product,customer,category,invoice,auth,dashboard,user
+from app.api.routers import product,category,invoice,auth,dashboard,user
 from app.core.config import settings
 from fastapi.middleware.cors import CORSMiddleware
 
