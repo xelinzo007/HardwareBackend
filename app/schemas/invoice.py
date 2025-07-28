@@ -2,8 +2,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 from datetime import date, time
 from app.schemas.customer import CustomerIn
-from app.schemas.product_item import ProductItem
-from app.schemas.invoice_item import InvoiceItemOut
+from app.schemas.invoice_item import ProductItem, InvoiceItemOut
+
+
+
+
+
 
 class InvoiceIn(BaseModel):
     customer: CustomerIn
