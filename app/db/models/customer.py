@@ -1,7 +1,6 @@
-# app/db/models/customer.py
-
 from sqlalchemy import Column, Integer, String
-from app.db.base import Base  # Make sure this Base is shared across all models
+from sqlalchemy.orm import relationship
+from app.db.base import Base
 
 class Customer(Base):
     __tablename__ = "customers"
@@ -10,3 +9,6 @@ class Customer(Base):
     customer_name = Column(String(255), nullable=False)
     phone = Column(String(20), nullable=True)
     address = Column(String(255), nullable=True)
+
+    # 🔧 Add this to fix the error
+    invoices = relationship("Invoice", back_populates="customer")
