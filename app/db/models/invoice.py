@@ -4,6 +4,9 @@ from datetime import datetime
 from pytz import timezone
 from app.db.base import Base
 
+
+Base = declarative_base()
+
 class Invoice(Base):
     __tablename__ = "invoices"
 

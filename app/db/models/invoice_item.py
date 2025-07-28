@@ -1,6 +1,9 @@
 from sqlalchemy import Column, Integer, String, Float, ForeignKey
 from app.db.base import Base
+from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship
+
+Base = declarative_base()
 
 class InvoiceItem(Base):
     __tablename__ = "invoice_items"

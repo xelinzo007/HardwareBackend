@@ -1,5 +1,8 @@
 from sqlalchemy import Column, Integer, String
+from sqlalchemy.ext.declarative import declarative_base
 from app.db.base import Base
+
+Base = declarative_base()
 
 class Customer(Base):
     __tablename__ = "customers"
