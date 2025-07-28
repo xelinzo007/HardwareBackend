@@ -1,5 +1,5 @@
 from datetime import datetime
-from sqlalchemy import Column, Integer, String,Text
+from sqlalchemy import Column, Integer, String,DateTime
 from sqlalchemy.orm import relationship
 from app.db.base import Base
 
@@ -9,6 +9,6 @@ class Customer(Base):
     customer_name = Column(String(100), nullable=False)
     phone = Column(String(20), unique=True, nullable=False)
     address = Column(String(255), nullable=True)
-    created_at = Column(datetime, default=datetime.now())
+    created_at = Column(DateTime, default=datetime.now())
 
     invoices = relationship("Invoice", back_populates="customer")
