@@ -10,8 +10,10 @@ from app.schemas.invoice import InvoiceIn, InvoiceOut, ProductItem, CustomerIn
 
 router = APIRouter()
 
+
 @router.post("/", response_model=InvoiceOut)
 def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
+    # Check or create customer
     customer_data = invoice_data.customer
     customer = db.query(Customer).filter(Customer.phone == customer_data.phone).first()
     if not customer:
@@ -25,9 +27,10 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
         db.refresh(customer)
 
     items = []
-    total_before_tax = 0
-    total_gst = 0
+    total_before_tax = 0.0
+    total_gst = 0.0
 
+    # Build invoice items from input and calculate totals
     for item in invoice_data.items:
         db_product = db.query(Product).filter(Product.id == item.id).first()
         if not db_product:
@@ -35,9 +38,9 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
         if db_product.quantity < item.quantity:
             raise HTTPException(status_code=400, detail=f"Insufficient stock for {db_product.product_name}")
 
+        # Deduct quantity from inventory
         db_product.quantity -= item.quantity
 
-        # Use selling price and calculate GST
         base_total = db_product.selling_price * item.quantity
         gst_amount = (base_total * db_product.gst) / 100
         line_total = base_total + gst_amount
@@ -52,15 +55,18 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
             category=db_product.category,
             quantity=item.quantity,
             price_per_unit=db_product.selling_price,
-            discount=item.discount,  # Optional: you can skip if you're not applying discounts
+            discount=item.discount,
             gst_percent=db_product.gst
         )
         items.append(invoice_item)
 
+    # Calculate final totals
     taxable_amount = total_before_tax + total_gst
     invoice_discount = (invoice_data.discount_percentage / 100) * taxable_amount
     final_total = taxable_amount - invoice_discount
+    total_amount = total_before_tax + total_gst
 
+    # Create invoice
     invoice = Invoice(
         invoice_id=f"INV-{uuid4().hex[:8].upper()}",
         customer_id=customer.id,
@@ -89,11 +95,21 @@ def create_invoice(invoice_data: InvoiceIn, db: Session = Depends(get_db)):
             address=customer.address,
             phone=customer.phone
         ),
-        items=[ProductItem(**item.__dict__) for item in items],
+        items=[
+            ProductItem(
+                product_code=item.product_code,
+                product_name=item.product_name,
+                category=item.category,
+                quantity=item.quantity,
+                price_per_unit=item.price_per_unit,
+                discount=item.discount,
+                gst_percent=item.gst_percent
+            ) for item in items
+        ],
         total_before_tax=total_before_tax,
         gst_amount=total_gst,
         taxable_amount=taxable_amount,
-        total_amount=taxable_amount,
+        total_amount=total_amount,
         discount=invoice_discount,
         final_total_after_discount=final_total,
         payment_mode=invoice.payment_mode

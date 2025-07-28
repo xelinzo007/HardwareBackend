@@ -7,7 +7,7 @@ class InvoiceItem(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     invoice_id = Column(Integer, ForeignKey("invoices.id"))
-    product_id = Column(Integer)
+    product_id = Column(Integer, ForeignKey("products.id"))
     product_code = Column(String)
     product_name = Column(String)
     category = Column(String)
