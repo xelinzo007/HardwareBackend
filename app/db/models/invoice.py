@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey,DateTime
+from sqlalchemy import Column, Integer, String, Float, ForeignKey,Date, Time
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.base import Base
@@ -22,8 +22,9 @@ class Invoice(Base):
 
     # created_at = Column(DateTime, default=datetime.now)
 
-    date = Column(DateTime, default=datetime.now).date()
-    time = Column(DateTime, default=datetime.now).time()
+    date = Column(Date, default=datetime.now().date)
+    time = Column(Time, default=datetime.now().time)
+
 
     customer = relationship("Customer", back_populates="invoices")
 
