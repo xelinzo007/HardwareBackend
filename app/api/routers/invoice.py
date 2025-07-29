@@ -109,7 +109,7 @@ def get_all_invoices(db: Session = Depends(get_db)):
             "total": invoice.final_total_after_discount,
             "items": [
                 {
-                    "product_code": item.product_code,
+                    "product_code": item.product_id,
                     "product_name": item.product_name,
                     "category": item.category,
                     "quantity": item.quantity,
@@ -140,7 +140,7 @@ def get_invoice_by_id(invoice_id: str, db: Session = Depends(get_db)):
         "total": invoice.final_total_after_discount,
         "items": [
             {
-                "product_code": item.product_code,
+                "product_code": item.product_id,
                 "product_name": item.product_name,
                 "category": item.category,
                 "quantity": item.quantity,
