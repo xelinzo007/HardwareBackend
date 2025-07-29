@@ -4,15 +4,17 @@ from app.db.base import Base
 
 class InvoiceItem(Base):
     __tablename__ = "invoice_items"
+
     id = Column(Integer, primary_key=True, index=True)
-    invoice_id = Column(Integer, ForeignKey("invoices.id", ondelete="CASCADE"))
+    invoice_id = Column(Integer, ForeignKey("invoices.id"))
     product_id = Column(Integer, ForeignKey("products.id"))
-    product_code = Column(String(100))
-    product_name = Column(String(255))
+
+    product_name = Column(String(100))
     category = Column(String(100))
     quantity = Column(Integer)
     price_per_unit = Column(Float)
-    gst_percent = Column(Float)
     discount = Column(Float)
+    gst_percent = Column(Float)
 
     invoice = relationship("Invoice", back_populates="items")
+    product = relationship("Product")  # optional for product backref

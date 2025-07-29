@@ -1,10 +1,9 @@
 from pydantic import BaseModel
-from typing import Optional
 
 class CustomerIn(BaseModel):
     customer_name: str
     phone: str
-    address: Optional[str] = None
+    address: str
 
     model_config = {
         "from_attributes": True
@@ -16,3 +15,6 @@ class CustomerOut(CustomerIn):
     model_config = {
         "from_attributes": True
     }
+
+
+    
