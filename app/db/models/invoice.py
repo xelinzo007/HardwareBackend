@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, Float, ForeignKey, Date, Time
+from sqlalchemy import Column, Integer, String, Float, ForeignKey,DateTime
 from sqlalchemy.orm import relationship
 from datetime import datetime
 from app.db.base import Base
@@ -20,7 +20,6 @@ class Invoice(Base):
     discount = Column(Float)
     final_total_after_discount = Column(Float)
 
-    date = Column(Date, default=datetime.now().date)
-    time = Column(Time, default=datetime.now().time)
+    created_at = Column(DateTime, default=datetime.now)
 
     items = relationship("InvoiceItem", back_populates="invoice", cascade="all, delete-orphan")

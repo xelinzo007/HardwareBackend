@@ -33,8 +33,7 @@ class InvoiceIn(BaseModel):
 
 class InvoiceOut(BaseModel):
     invoice_id: str
-    date: date
-    time: time
+    created_at: date
     customer: CustomerIn
     items: List[ProductItem]
     total_before_tax: float
