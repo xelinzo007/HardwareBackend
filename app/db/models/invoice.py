@@ -22,4 +22,6 @@ class Invoice(Base):
 
     created_at = Column(DateTime, default=datetime.now)
 
+    customer = relationship("Customer", back_populates="invoices")
+
     items = relationship("InvoiceItem", back_populates="invoice", cascade="all, delete-orphan")

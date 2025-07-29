@@ -11,3 +11,4 @@ class Customer(Base):
     address = Column(String(255))
 
     invoices = relationship("Invoice", back_populates="customer")
+    
