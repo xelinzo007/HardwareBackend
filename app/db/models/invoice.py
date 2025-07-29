@@ -20,7 +20,10 @@ class Invoice(Base):
     discount = Column(Float)
     final_total_after_discount = Column(Float)
 
-    created_at = Column(DateTime, default=datetime.now)
+    # created_at = Column(DateTime, default=datetime.now)
+
+    date = Column(DateTime, default=datetime.now).date()
+    time = Column(DateTime, default=datetime.now).time()
 
     customer = relationship("Customer", back_populates="invoices")
 
